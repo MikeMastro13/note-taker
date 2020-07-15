@@ -33,8 +33,15 @@ app.post("/api/notes", (req, res) => {
         note["id"] = noteData.length;
         noteData.push(note);
 
-        fs.writeFile("./db/db.json", JSON.stringify(noteData), (err) => { if(err) throw err; return data; });
+        let updatedNotes = JSON.stringify(noteData);
+
+        fs.writeFile("./db/db.json", updatedNotes, (err) => { 
+            if(err) throw err; 
+            return data; 
+        });
+
         res.json(db);
+        console.log("Note saved.");
     });
 })
 
@@ -42,18 +49,16 @@ app.delete("/api/notes/:id", (req, res) => {
     let selectNote = req.params.id;
     let notes = db;
 
-    console.log(notes.length);
-
     for (var i = 0; i < notes.length; i++) {
-        if (selectNote === notes[i].id) {
+        if (selectNote == notes[i].id) {
             notes.splice(i, 1);
             return notes;
         }
 
-        console.log(notes);
-
-        fs.writeFile("./db/db.json", JSON.stringify(notes), (err) => { if(err) throw err; return data; });
+        var updatedNotes = JSON.stringify(notes);
+        fs.writeFile("./db/db.json", updatedNotes, (err) => { if(err) throw err });
     }
+    console.log("Note deleted.");
 });
 
 app.listen(process.env.PORT || PORT, () => {
